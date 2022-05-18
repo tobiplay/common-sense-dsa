@@ -1,6 +1,3 @@
-from tracemalloc import start
-
-
 def search_sort(array: list) -> list:
 
     # Run to the last value before the end of the array,
