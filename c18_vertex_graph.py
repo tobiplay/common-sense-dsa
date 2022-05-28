@@ -88,8 +88,8 @@ def dfs(vertex: Vertex, visited_vertices: dict[str, bool] = {}):
             # we have to continue on with the next adjacent vertex,
             # because return would just end the DFS on that vertex.
             continue
-        else:
-            dfs(adjacent_vertex, visited_vertices)
+
+        dfs(adjacent_vertex, visited_vertices)
 
 
 def dfs_val(vertex: Vertex, search_val: str, visited_vertices: dict[str, bool] = {}) -> None | Vertex:
@@ -100,6 +100,9 @@ def dfs_val(vertex: Vertex, search_val: str, visited_vertices: dict[str, bool] =
     vertex : Vertex
         The vertex from which we're starting the DFS.
 
+    search_val : str
+        The value we're looking for during our DFS.
+
     visited_vertices : dict[str, bool]
         This (optional) dict helps us keep track of all the vertices 
         we've visited so far. It's initialized as an empty dict that 
@@ -107,6 +110,14 @@ def dfs_val(vertex: Vertex, search_val: str, visited_vertices: dict[str, bool] =
         that key. Because it's passed down each function call, the key
         is added to same object in memory every time.
 
+    Returns
+    -------
+    vertex : Vertex
+        The vertex that has the value we're looking for.
+
+    or
+
+    None
     '''
 
     # If the value of the current vertex is the value
@@ -114,10 +125,14 @@ def dfs_val(vertex: Vertex, search_val: str, visited_vertices: dict[str, bool] =
     if vertex.value == search_val:
         return vertex
 
+    # This is used to keep track of the visited vertices.
     # Add the vertex we pass as an argument to the dictionary,
     # because the first time we perform DFS on that vertex, it's
     # not going to be in the dict yet:
     visited_vertices[vertex.value] = True
+    
+    # Print all vertices we're visiting, which equals some sort
+    # of visual trail we can follow whilst debugging:
     print(vertex.value)
 
     for adjacent_vertex in vertex.adjacent_vertices:
@@ -126,8 +141,19 @@ def dfs_val(vertex: Vertex, search_val: str, visited_vertices: dict[str, bool] =
             # we have to continue on with the next adjacent vertex,
             # because return would just end the DFS on that vertex.
             continue
-        else:
-            dfs(adjacent_vertex, visited_vertices)
+        # If this adjacent vertex has the value we're looking,
+        # return it:
+        if adjacent_vertex.value == search_val:
+            return adjacent_vertex
+
+        # Otherwise, we have to recursively search for that value:
+        vertex_with_search_val = dfs_val(
+            adjacent_vertex, search_val, visited_vertices)
+
+        # If we actually were able to find the vertex with the value
+        # we're looking for return that vertex:
+        if vertex_with_search_val:
+            return vertex_with_search_val
 
 
 alice = Vertex("Alice")
@@ -155,4 +181,5 @@ derek.add_adjacent_vertex(elaine)
 
 gina.add_adjacent_vertex(irena)
 
-dfs(alice)
+# dfs(alice)
+print(dfs_val(alice, "Derek").value) # type: ignore
